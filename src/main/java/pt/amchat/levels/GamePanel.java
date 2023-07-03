@@ -9,22 +9,23 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public abstract class GamePanel extends JPanel implements ActionListener {
-
     protected static final int BOARD_WIDTH = 40;
     protected static final int BOARD_HEIGHT = 30;
     protected static final int CELL_SIZE = 20;
-
     protected final Snake snake = new Snake();
     protected final Food food = new Food();
     protected final JLabel scoreLabel;
     protected final JLabel highScoreLabel;
-
+    protected final JLabel displayLevel;
     private final JLabel pauseMessage;
     protected boolean gameIsRunning;
     protected int highScore;
     private Timer timer;
 
-    public GamePanel() {
+    private Difficulty difficulty;
+
+    public GamePanel(int i, Difficulty difficulty) {
+        this.difficulty = difficulty;
         setLayout(null);
         setFocusable(true);
         requestFocusInWindow();
@@ -35,6 +36,11 @@ public abstract class GamePanel extends JPanel implements ActionListener {
                 handleKeyPress(e.getKeyCode());
             }
         });
+
+        displayLevel = new JLabel("Level: " + i + " (" + difficulty.name() + ")");
+        displayLevel.setFont(new Font("Arial", Font.BOLD, 16));
+        displayLevel.setBounds(175, 2, 200, 30);
+        add(displayLevel);
 
         pauseMessage = new JLabel("Pause: \'P\' Key");
         pauseMessage.setFont(new Font("Arial", Font.BOLD, 16));
@@ -59,7 +65,7 @@ public abstract class GamePanel extends JPanel implements ActionListener {
 
         generateFood();
 
-        timer = new Timer(50, this);
+        timer = new Timer(difficulty.getValue(), this);
         timer.start();
 
         gameIsRunning = true;
@@ -68,6 +74,12 @@ public abstract class GamePanel extends JPanel implements ActionListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        // Draw borders
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(0, 2 * CELL_SIZE, CELL_SIZE, CELL_SIZE * BOARD_HEIGHT);
+        g.fillRect(0, 2 * CELL_SIZE, CELL_SIZE * BOARD_WIDTH, CELL_SIZE);
+        g.fillRect(CELL_SIZE * (BOARD_WIDTH - 2), 2 * CELL_SIZE, CELL_SIZE * 2, CELL_SIZE * BOARD_HEIGHT);
+        g.fillRect(0, CELL_SIZE * (BOARD_HEIGHT - 3), CELL_SIZE * BOARD_WIDTH, CELL_SIZE * 2);
 
         // Draw the snake head
         g.setColor(Color.GREEN);
@@ -141,7 +153,7 @@ public abstract class GamePanel extends JPanel implements ActionListener {
      * Need to override for collisions with the boarders and other obstacles according to level
      */
     protected void checkCollisionsAndFood() {
-        if (hasSnakeBodyCollisions()) {
+        if (hasSnakeBodyCollisions() || snake.xPos < 1 || snake.xPos >= BOARD_WIDTH - 2 || snake.yPos < 3 || snake.yPos >= BOARD_HEIGHT - 3) {
             endGame();
         }
         if (snake.xPos == food.xPos && snake.yPos == food.yPos) {
@@ -150,6 +162,11 @@ public abstract class GamePanel extends JPanel implements ActionListener {
             snake.body.add(new BodyPart(snake.xPos, snake.yPos));
         }
     }
+
+    /***
+     * Need to override to avoid food to appear inside obstacles
+     */
+    protected abstract void generateFood();
 
     private boolean hasSnakeBodyCollisions() {
         for (BodyPart bodyPart : snake.body) {
@@ -187,11 +204,6 @@ public abstract class GamePanel extends JPanel implements ActionListener {
         snake.score = 0;
         snake.body.clear();
     }
-
-    /***
-     * Need to override to avoid food to appear inside obstacles
-     */
-    protected abstract void generateFood();
 
     class Snake {
         public int direction;
