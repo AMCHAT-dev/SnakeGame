@@ -1,5 +1,7 @@
 package pt.amchat.levels;
 
+import pt.amchat.InitialMenu;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,18 +16,16 @@ public abstract class GamePanel extends JPanel implements ActionListener {
     protected static final int CELL_SIZE = 20;
     protected final Snake snake = new Snake();
     protected final Food food = new Food();
-    protected final JLabel scoreLabel;
-    protected final JLabel highScoreLabel;
-    protected final JLabel displayLevel;
-    private final JLabel pauseMessage;
+    protected final JLabel scoreLabel, highScoreLabel, displayLevel, pauseMessage;
     protected boolean gameIsRunning;
     protected int highScore;
     private Timer timer;
-
     private Difficulty difficulty;
+    private JFrame frame;
 
-    public GamePanel(int i, Difficulty difficulty) {
+    public GamePanel(int i, Difficulty difficulty, JFrame frame) {
         this.difficulty = difficulty;
+        this.frame = frame;
         setLayout(null);
         setFocusable(true);
         requestFocusInWindow();
@@ -192,14 +192,18 @@ public abstract class GamePanel extends JPanel implements ActionListener {
         String beatHighScore = "Game Over! New High Score: " + snake.score + "\nDo you want to play again?";
         String message = snake.score > highScore ? beatHighScore : normalScore;
 
-
         int choice = JOptionPane.showConfirmDialog(this, message
                 , "Game Over",
                 JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
             startGame();
         } else {
-            System.exit(0); // Shuts down
+            InitialMenu initialMenu = new InitialMenu(frame);
+            frame.getContentPane().removeAll();
+            frame.getContentPane().add(initialMenu);
+            frame.getContentPane().revalidate();
+            frame.getContentPane().repaint();
+            initialMenu.requestFocus();
         }
         snake.score = 0;
         snake.body.clear();

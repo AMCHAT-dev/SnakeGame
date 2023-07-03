@@ -1,11 +1,11 @@
 package pt.amchat.levels;
 
+import javax.swing.*;
+
 public class Level1 extends GamePanel {
-
-    public Level1(Difficulty difficulty) {
-        super(1, difficulty);
+    public Level1(Difficulty difficulty, JFrame frame) {
+        super(1, difficulty, frame);
     }
-
 
     @Override
     protected void generateFood() {

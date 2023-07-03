@@ -1,9 +1,5 @@
 package pt.amchat;
 
-import pt.amchat.levels.Difficulty;
-import pt.amchat.levels.GamePanel;
-import pt.amchat.levels.Level2;
-
 import javax.swing.*;
 
 public class Main {
@@ -13,11 +9,9 @@ public class Main {
         frame.setSize(800, 600);
         frame.setResizable(false);
 
-        GamePanel gamePanel = new Level2(Difficulty.MEDIUM);
-        frame.add(gamePanel);
-
+        InitialMenu initialMenu = new InitialMenu(frame);
+        frame.add(initialMenu);
         frame.setVisible(true);
-        gamePanel.startGame();
     }
 
 }
