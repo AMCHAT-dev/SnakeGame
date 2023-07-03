@@ -23,14 +23,32 @@ public class Level2 extends GamePanel {
     @Override
     protected void checkCollisionsAndFood() {
         super.checkCollisionsAndFood();
-        if (snake.xPos == BOARD_WIDTH / 4 && snake.yPos > BOARD_HEIGHT / 3) {
+        if (snake.xPos == BOARD_WIDTH / 4 && snake.yPos >= BOARD_HEIGHT / 3 && snake.yPos < BOARD_HEIGHT * 2 / 3) {
             endGame();
         }
 
+        if (snake.xPos == 3 * BOARD_WIDTH / 4 && snake.yPos >= BOARD_HEIGHT / 3 && snake.yPos < BOARD_HEIGHT * 2 / 3) {
+            endGame();
+        }
     }
 
     @Override
     protected void generateFood() {
+        do {
+            food.xPos = (int) Math.floor(Math.random() * (1 + (BOARD_WIDTH - 4) - 4)) + 4;
+            food.yPos = (int) Math.floor(Math.random() * (1 + (BOARD_HEIGHT - 4) - 4)) + 4;
+        } while (foodOverlapWithWalls());
+    }
 
+    private boolean foodOverlapWithWalls() {
+        if (food.xPos == BOARD_WIDTH / 4 && food.yPos >= BOARD_HEIGHT / 3 && food.yPos < BOARD_HEIGHT * 2 / 3) {
+            return true;
+        }
+
+        if (food.xPos == 3 * BOARD_WIDTH / 4 && food.yPos >= BOARD_HEIGHT / 3 && food.yPos < BOARD_HEIGHT * 2 / 3) {
+            return true;
+        }
+        return false;
     }
 }
+
