@@ -1,4 +1,7 @@
-package org.example;
+package pt.amchat;
+
+import pt.amchat.levels.GamePanel;
+import pt.amchat.levels.Level1;
 
 import javax.swing.*;
 
@@ -9,7 +12,7 @@ public class Main {
         frame.setSize(800, 600);
         frame.setResizable(false);
 
-        GamePanel gamePanel = new GamePanel();
+        GamePanel gamePanel = new Level1();
         frame.add(gamePanel);
 
         frame.setVisible(true);

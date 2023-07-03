@@ -1,4 +1,4 @@
-package org.example;
+package pt.amchat.levels;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,19 +8,24 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class GamePanel extends JPanel implements ActionListener {
+public abstract class GamePanel extends JPanel implements ActionListener {
 
-    private static final int BOARD_WIDTH = 38;
-    private static final int BOARD_HEIGHT = 28;
-    private static final int CELL_SIZE = 20;
+    protected static final int BOARD_WIDTH = 40;
+    protected static final int BOARD_HEIGHT = 30;
+    protected static final int CELL_SIZE = 20;
 
-    private final Snake snake = new Snake();
-    private final Food food = new Food();
-    private final JLabel scoreLabel;
+    protected final Snake snake = new Snake();
+    protected final Food food = new Food();
+    protected final JLabel scoreLabel;
+    protected final JLabel highScoreLabel;
+
+    private final JLabel pauseMessage;
+    protected boolean gameIsRunning;
+    protected int highScore;
     private Timer timer;
-    private boolean gameIsRunning;
 
     public GamePanel() {
+        setLayout(null);
         setFocusable(true);
         requestFocusInWindow();
 
@@ -31,8 +36,19 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         });
 
+        pauseMessage = new JLabel("Pause: \'P\' Key");
+        pauseMessage.setFont(new Font("Arial", Font.BOLD, 16));
+        pauseMessage.setBounds(50, 2, 200, 30);
+        add(pauseMessage);
+
+        highScoreLabel = new JLabel("HighScore: " + highScore);
+        highScoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        highScoreLabel.setBounds(500, 2, 200, 30);
+        add(highScoreLabel);
+
         scoreLabel = new JLabel("Score: 0");
         scoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        scoreLabel.setBounds(380, 2, 100, 30);
         add(scoreLabel);
     }
 
@@ -43,7 +59,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
         generateFood();
 
-        timer = new Timer(100, this);
+        timer = new Timer(50, this);
         timer.start();
 
         gameIsRunning = true;
@@ -52,7 +68,7 @@ public class GamePanel extends JPanel implements ActionListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
+
         // Draw the snake head
         g.setColor(Color.GREEN);
         g.fillRect(snake.xPos * CELL_SIZE, snake.yPos * CELL_SIZE, CELL_SIZE, CELL_SIZE);
@@ -78,6 +94,7 @@ public class GamePanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (gameIsRunning) {
             moveSnake();
+            updateHighScoreLabel();
             checkCollisionsAndFood();
             updateScoreLabel();
             repaint();
@@ -93,6 +110,8 @@ public class GamePanel extends JPanel implements ActionListener {
             snake.direction = KeyEvent.VK_LEFT;
         } else if (keyCode == KeyEvent.VK_RIGHT && snake.direction != KeyEvent.VK_LEFT) {
             snake.direction = KeyEvent.VK_RIGHT;
+        } else if (keyCode == KeyEvent.VK_P) {
+            gameIsRunning = !gameIsRunning;
         }
     }
 
@@ -118,9 +137,12 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
-    private void checkCollisionsAndFood() {
-        if (snake.xPos < 0 || snake.xPos >= BOARD_WIDTH || snake.yPos < 0 || snake.yPos >= BOARD_HEIGHT || hasSnakeBodyCollisions()) {
-            endGame(); // End the game
+    /***
+     * Need to override for collisions with the boarders and other obstacles according to level
+     */
+    protected void checkCollisionsAndFood() {
+        if (hasSnakeBodyCollisions()) {
+            endGame();
         }
         if (snake.xPos == food.xPos && snake.yPos == food.yPos) {
             snake.score++;
@@ -140,25 +162,36 @@ public class GamePanel extends JPanel implements ActionListener {
         scoreLabel.setText("Score: " + snake.score); // Update the score label text
     }
 
-    private void endGame() {
+    private void updateHighScoreLabel() {
+        if (snake.score >= highScore && snake.score != 0) {
+            highScoreLabel.setText("High Score: " + snake.score); // Update the score label text
+        }
+    }
+
+    protected void endGame() {
         gameIsRunning = false;
         timer.stop();
-        int choice = JOptionPane.showConfirmDialog(this,
-                "Game Over! Score: " + snake.score + "\nDo you want to play again?", "Game Over",
+        String normalScore = "Game Over! Score: " + snake.score + "\nDo you want to play again?";
+        String beatHighScore = "Game Over! New High Score: " + snake.score + "\nDo you want to play again?";
+        String message = snake.score > highScore ? beatHighScore : normalScore;
+
+
+        int choice = JOptionPane.showConfirmDialog(this, message
+                , "Game Over",
                 JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
-            startGame(); // Start a new game if the player chooses to play again
+            startGame();
         } else {
-            System.exit(0); // Exit the program if the player chooses not to play again
+            System.exit(0); // Shuts down
         }
         snake.score = 0;
         snake.body.clear();
     }
 
-    private void generateFood() {
-        food.xPos = (int) (Math.random() * (BOARD_WIDTH));
-        food.yPos = (int) (Math.random() * (BOARD_HEIGHT));
-    }
+    /***
+     * Need to override to avoid food to appear inside obstacles
+     */
+    protected abstract void generateFood();
 
     class Snake {
         public int direction;
