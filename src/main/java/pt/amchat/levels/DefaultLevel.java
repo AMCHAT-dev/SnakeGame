@@ -10,7 +10,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public abstract class GamePanel extends JPanel implements ActionListener {
+public abstract class DefaultLevel extends JPanel implements ActionListener {
     protected static final int BOARD_WIDTH = 40;
     protected static final int BOARD_HEIGHT = 30;
     protected static final int CELL_SIZE = 20;
@@ -23,7 +23,7 @@ public abstract class GamePanel extends JPanel implements ActionListener {
     private Difficulty difficulty;
     private JFrame frame;
 
-    public GamePanel(int i, Difficulty difficulty, JFrame frame) {
+    public DefaultLevel(int i, Difficulty difficulty, JFrame frame) {
         this.difficulty = difficulty;
         this.frame = frame;
         setLayout(null);
@@ -188,12 +188,14 @@ public abstract class GamePanel extends JPanel implements ActionListener {
     protected void endGame() {
         gameIsRunning = false;
         timer.stop();
-        String normalScore = "Game Over! Score: " + snake.score + "\nDo you want to play again?";
-        String beatHighScore = "Game Over! New High Score: " + snake.score + "\nDo you want to play again?";
-        String message = snake.score > highScore ? beatHighScore : normalScore;
-
-        int choice = JOptionPane.showConfirmDialog(this, message
-                , "Game Over",
+        String message;
+        if (snake.score > highScore) {
+            message = "Game Over! New High Score: " + snake.score + "\nDo you want to play again?";
+            highScore = snake.score;
+        } else {
+            message = "Game Over! Score: " + snake.score + "\nDo you want to play again?";
+        }
+        int choice = JOptionPane.showConfirmDialog(this, message, "Game Over",
                 JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
             startGame();

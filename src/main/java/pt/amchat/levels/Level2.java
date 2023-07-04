@@ -3,7 +3,7 @@ package pt.amchat.levels;
 import javax.swing.*;
 import java.awt.*;
 
-public class Level2 extends GamePanel {
+public class Level2 extends DefaultLevel {
     public Level2(Difficulty difficulty, JFrame frame) {
         super(2, difficulty, frame);
     }
