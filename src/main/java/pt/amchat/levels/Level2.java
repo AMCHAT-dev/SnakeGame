@@ -1,5 +1,7 @@
 package pt.amchat.levels;
 
+import pt.amchat.levelelements.Difficulty;
+
 import javax.swing.*;
 import java.awt.*;
 

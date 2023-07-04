@@ -1,4 +1,4 @@
-package pt.amchat.levels;
+package pt.amchat.levelelements;
 
 public enum Difficulty {
     EASY(150),

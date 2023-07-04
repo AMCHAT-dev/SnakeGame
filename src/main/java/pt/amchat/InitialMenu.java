@@ -1,7 +1,7 @@
 package pt.amchat;
 
+import pt.amchat.levelelements.Difficulty;
 import pt.amchat.levels.DefaultLevel;
-import pt.amchat.levels.Difficulty;
 import pt.amchat.levels.Level1;
 import pt.amchat.levels.Level2;
 

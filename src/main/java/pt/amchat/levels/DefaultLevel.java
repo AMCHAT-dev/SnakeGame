@@ -1,6 +1,10 @@
 package pt.amchat.levels;
 
 import pt.amchat.InitialMenu;
+import pt.amchat.levelelements.Difficulty;
+import pt.amchat.levelelements.Direction;
+import pt.amchat.levelelements.Food;
+import pt.amchat.levelelements.Snake;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 
 public abstract class DefaultLevel extends JPanel implements ActionListener {
     protected static final int BOARD_WIDTH = 40;
@@ -61,7 +64,7 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
     public void startGame() {
         snake.xPos = BOARD_WIDTH / 2;
         snake.yPos = BOARD_HEIGHT / 2;
-        snake.direction = KeyEvent.VK_RIGHT;
+        snake.direction = Direction.RIGHT;
 
         generateFood();
 
@@ -87,7 +90,7 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
 
         // Draw the snake body
         g.setColor(Color.GREEN.darker());
-        for (BodyPart bodyPart : snake.body) {
+        for (Snake.BodyPart bodyPart : snake.body) {
             g.fillRect(bodyPart.x * CELL_SIZE, bodyPart.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
 
@@ -105,7 +108,7 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (gameIsRunning) {
-            moveSnake();
+            snake.moveSnake(food);
             updateHighScoreLabel();
             checkCollisionsAndFood();
             updateScoreLabel();
@@ -114,52 +117,30 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
     }
 
     public void handleKeyPress(int keyCode) {
-        if (keyCode == KeyEvent.VK_UP && snake.direction != KeyEvent.VK_DOWN) {
-            snake.direction = KeyEvent.VK_UP;
-        } else if (keyCode == KeyEvent.VK_DOWN && snake.direction != KeyEvent.VK_UP) {
-            snake.direction = KeyEvent.VK_DOWN;
-        } else if (keyCode == KeyEvent.VK_LEFT && snake.direction != KeyEvent.VK_RIGHT) {
-            snake.direction = KeyEvent.VK_LEFT;
-        } else if (keyCode == KeyEvent.VK_RIGHT && snake.direction != KeyEvent.VK_LEFT) {
-            snake.direction = KeyEvent.VK_RIGHT;
+        if (keyCode == KeyEvent.VK_UP && snake.direction != Direction.DOWN) {
+            snake.direction = Direction.UP;
+        } else if (keyCode == KeyEvent.VK_DOWN && snake.direction != Direction.UP) {
+            snake.direction = Direction.DOWN;
+        } else if (keyCode == KeyEvent.VK_LEFT && snake.direction != Direction.RIGHT) {
+            snake.direction = Direction.LEFT;
+        } else if (keyCode == KeyEvent.VK_RIGHT && snake.direction != Direction.LEFT) {
+            snake.direction = Direction.RIGHT;
         } else if (keyCode == KeyEvent.VK_P) {
             gameIsRunning = !gameIsRunning;
         }
     }
 
-    private void moveSnake() {
-        // Create a new body part at the current position of the snake's head
-        BodyPart newBodyPart = new BodyPart(snake.xPos, snake.yPos);
-
-        // Move the snake's body
-        snake.body.add(0, newBodyPart);
-
-        if (!(snake.xPos == food.xPos && snake.yPos == food.yPos)) {
-            snake.body.remove(snake.body.size() - 1);
-        }
-
-        if (snake.direction == KeyEvent.VK_UP) {
-            snake.yPos--;
-        } else if (snake.direction == KeyEvent.VK_DOWN) {
-            snake.yPos++;
-        } else if (snake.direction == KeyEvent.VK_LEFT) {
-            snake.xPos--;
-        } else if (snake.direction == KeyEvent.VK_RIGHT) {
-            snake.xPos++;
-        }
-    }
 
     /***
      * Need to override for collisions with the boarders and other obstacles according to level
      */
     protected void checkCollisionsAndFood() {
-        if (hasSnakeBodyCollisions() || snake.xPos < 1 || snake.xPos >= BOARD_WIDTH - 2 || snake.yPos < 3 || snake.yPos >= BOARD_HEIGHT - 3) {
+        if (snake.hasBodyCollisions() || snake.xPos < 1 || snake.xPos >= BOARD_WIDTH - 2 || snake.yPos < 3 || snake.yPos >= BOARD_HEIGHT - 3) {
             endGame();
         }
-        if (snake.xPos == food.xPos && snake.yPos == food.yPos) {
-            snake.score++;
+        if (snake.doesEatFood(food)) {
             generateFood();
-            snake.body.add(new BodyPart(snake.xPos, snake.yPos));
+            snake.eatsFood();
         }
     }
 
@@ -168,12 +149,6 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
      */
     protected abstract void generateFood();
 
-    private boolean hasSnakeBodyCollisions() {
-        for (BodyPart bodyPart : snake.body) {
-            if (snake.xPos == bodyPart.x && snake.yPos == bodyPart.y) return true;
-        }
-        return false;
-    }
 
     private void updateScoreLabel() {
         scoreLabel.setText("Score: " + snake.score); // Update the score label text
@@ -211,26 +186,5 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
         snake.body.clear();
     }
 
-    class Snake {
-        public int direction;
-        public int xPos;
-        public int yPos;
-        public int score;
-        public java.util.List<BodyPart> body = new ArrayList<>();
-    }
 
-    class BodyPart {
-        public int x;
-        public int y;
-
-        public BodyPart(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
-
-    class Food {
-        public int xPos;
-        public int yPos;
-    }
 }
