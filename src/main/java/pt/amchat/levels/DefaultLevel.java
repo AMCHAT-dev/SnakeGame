@@ -66,7 +66,7 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
     public void startGame() {
         snake.xPos = BOARD_WIDTH / 2;
         snake.yPos = BOARD_HEIGHT / 2;
-        snake.direction = Direction.RIGHT;
+        snake.direction = Direction.STOPPED;
 
         generateFood();
 
