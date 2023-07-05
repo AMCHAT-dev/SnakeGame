@@ -134,7 +134,7 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
 
     public void handleKeyPress(int keyCode) {
         long currentTime = System.currentTimeMillis();
-        long coolDownPeriod = (long) difficulty.getValue();
+        long coolDownPeriod = (long) (0.9 * difficulty.getValue());
         if (currentTime - lastTimeDirectionChanged < coolDownPeriod) {
             return;
         }
