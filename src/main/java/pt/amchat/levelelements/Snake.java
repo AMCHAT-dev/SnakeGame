@@ -32,7 +32,7 @@ public class Snake {
         }
     }
 
-    public boolean doesEatFood(Food food) {
+    public boolean isEating(Food food) {
         return xPos == food.xPos && yPos == food.yPos;
     }
 

@@ -26,6 +26,8 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
     private Difficulty difficulty;
     private JFrame frame;
 
+    private long lastTimeDirectionChanged;
+
     public DefaultLevel(int i, Difficulty difficulty, JFrame frame) {
         this.difficulty = difficulty;
         this.frame = frame;
@@ -117,14 +119,23 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
     }
 
     public void handleKeyPress(int keyCode) {
+        long currentTime = System.currentTimeMillis();
+        long coolDownPeriod = (long) difficulty.getValue();
+        if (currentTime - lastTimeDirectionChanged < coolDownPeriod) {
+            return;
+        }
         if (keyCode == KeyEvent.VK_UP && snake.direction != Direction.DOWN) {
             snake.direction = Direction.UP;
+            lastTimeDirectionChanged = currentTime;
         } else if (keyCode == KeyEvent.VK_DOWN && snake.direction != Direction.UP) {
             snake.direction = Direction.DOWN;
+            lastTimeDirectionChanged = currentTime;
         } else if (keyCode == KeyEvent.VK_LEFT && snake.direction != Direction.RIGHT) {
             snake.direction = Direction.LEFT;
+            lastTimeDirectionChanged = currentTime;
         } else if (keyCode == KeyEvent.VK_RIGHT && snake.direction != Direction.LEFT) {
             snake.direction = Direction.RIGHT;
+            lastTimeDirectionChanged = currentTime;
         } else if (keyCode == KeyEvent.VK_P) {
             gameIsRunning = !gameIsRunning;
         }
@@ -138,7 +149,7 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
         if (snake.hasBodyCollisions() || snake.xPos < 1 || snake.xPos >= BOARD_WIDTH - 2 || snake.yPos < 3 || snake.yPos >= BOARD_HEIGHT - 3) {
             endGame();
         }
-        if (snake.doesEatFood(food)) {
+        if (snake.isEating(food)) {
             generateFood();
             snake.eatsFood();
         }

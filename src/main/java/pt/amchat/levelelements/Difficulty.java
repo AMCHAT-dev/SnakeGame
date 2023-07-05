@@ -1,10 +1,10 @@
 package pt.amchat.levelelements;
 
 public enum Difficulty {
-    EASY(150),
-    MEDIUM(100),
-    HARD(75),
-    LEGEND(50);
+    EASY(100),
+    MEDIUM(80),
+    HARD(60),
+    LEGEND(40);
 
     private int value;
 

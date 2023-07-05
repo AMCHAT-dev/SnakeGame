@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class InitialMenu extends JPanel implements ActionListener {
-    private GameState gameState;
     private JButton playLevel1Button;
     private JButton playLevel2Button;
     private JButton exitButton;
@@ -79,8 +78,6 @@ public class InitialMenu extends JPanel implements ActionListener {
         add(buttonPanel, BorderLayout.CENTER);
         add(difficultyPanel, BorderLayout.EAST);
 
-        // Set initial game state
-        gameState = GameState.MENU;
     }
 
 
