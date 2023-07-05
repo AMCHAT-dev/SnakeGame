@@ -4,6 +4,7 @@ import pt.amchat.levelelements.Difficulty;
 import pt.amchat.levels.DefaultLevel;
 import pt.amchat.levels.Level1;
 import pt.amchat.levels.Level2;
+import pt.amchat.sound.SoundSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +20,6 @@ public class InitialMenu extends JPanel implements ActionListener {
     private JButton hardButton;
     private JButton legendButton;
     private JFrame frame;
-
     private Difficulty difficultySelected = Difficulty.EASY;
 
     public InitialMenu(JFrame frame) {
@@ -107,7 +107,7 @@ public class InitialMenu extends JPanel implements ActionListener {
         frame.getContentPane().add(game);
         frame.getContentPane().revalidate();
         frame.getContentPane().repaint();
-        game.startGame();
+        game.startGame(SoundSettings.ON);
         game.requestFocus();
     }
 }

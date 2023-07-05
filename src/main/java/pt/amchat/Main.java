@@ -12,6 +12,8 @@ public class Main {
         InitialMenu initialMenu = new InitialMenu(frame);
         frame.add(initialMenu);
         frame.setVisible(true);
+
+
     }
 
 }

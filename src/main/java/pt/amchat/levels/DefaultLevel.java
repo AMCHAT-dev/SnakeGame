@@ -5,6 +5,8 @@ import pt.amchat.levelelements.Difficulty;
 import pt.amchat.levelelements.Direction;
 import pt.amchat.levelelements.Food;
 import pt.amchat.levelelements.Snake;
+import pt.amchat.sound.Sound;
+import pt.amchat.sound.SoundSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,12 +21,14 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
     protected static final int CELL_SIZE = 20;
     protected final Snake snake = new Snake();
     protected final Food food = new Food();
-    protected final JLabel scoreLabel, highScoreLabel, displayLevel, pauseMessage;
+    protected final JLabel scoreLabel, highScoreLabel, displayLevel, pauseMessage, soundMessage;
     protected boolean gameIsRunning;
     protected int highScore;
     private Timer timer;
     private Difficulty difficulty;
     private JFrame frame;
+
+    private Sound sound = new Sound();
 
     private long lastTimeDirectionChanged;
 
@@ -42,31 +46,40 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
             }
         });
 
-        displayLevel = new JLabel("Level: " + i + " (" + difficulty.name() + ")");
-        displayLevel.setFont(new Font("Arial", Font.BOLD, 16));
-        displayLevel.setBounds(175, 2, 200, 30);
-        add(displayLevel);
-
         pauseMessage = new JLabel("Pause: \'P\' Key");
         pauseMessage.setFont(new Font("Arial", Font.BOLD, 16));
-        pauseMessage.setBounds(50, 2, 200, 30);
+        pauseMessage.setBounds(25, 2, 125, 30);
         add(pauseMessage);
 
-        highScoreLabel = new JLabel("HighScore: " + highScore);
-        highScoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        highScoreLabel.setBounds(500, 2, 200, 30);
-        add(highScoreLabel);
+        soundMessage = new JLabel("Sound ON/OFF: \'O\' Key ");
+        soundMessage.setFont(new Font("Arial", Font.BOLD, 16));
+        soundMessage.setBounds(150, 2, 200, 30);
+        add(soundMessage);
+
+        displayLevel = new JLabel("Level: " + i + " (" + difficulty.name() + ")");
+        displayLevel.setFont(new Font("Arial", Font.BOLD, 16));
+        displayLevel.setBounds(350, 2, 150, 30);
+        add(displayLevel);
+
 
         scoreLabel = new JLabel("Score: 0");
         scoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        scoreLabel.setBounds(380, 2, 100, 30);
+        scoreLabel.setBounds(550, 2, 100, 30);
         add(scoreLabel);
+
+        highScoreLabel = new JLabel("HighScore: " + highScore);
+        highScoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        highScoreLabel.setBounds(650, 2, 200, 30);
+        add(highScoreLabel);
+
     }
 
-    public void startGame() {
+    public void startGame(SoundSettings soundSettings) {
         snake.xPos = BOARD_WIDTH / 2;
         snake.yPos = BOARD_HEIGHT / 2;
         snake.direction = Direction.STOPPED;
+
+        if (soundSettings == SoundSettings.ON) sound.loop();
 
         generateFood();
 
@@ -74,6 +87,7 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
         timer.start();
 
         gameIsRunning = true;
+
     }
 
     @Override
@@ -138,6 +152,8 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
             lastTimeDirectionChanged = currentTime;
         } else if (keyCode == KeyEvent.VK_P) {
             gameIsRunning = !gameIsRunning;
+        } else if (keyCode == KeyEvent.VK_O) {
+            sound.switchStates();
         }
     }
 
@@ -172,8 +188,10 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
     }
 
     protected void endGame() {
+        SoundSettings previousSettings = sound.state();
         gameIsRunning = false;
         timer.stop();
+        sound.stop();
         String message;
         if (snake.score > highScore) {
             message = "Game Over! New High Score: " + snake.score + "\nDo you want to play again?";
@@ -184,7 +202,7 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
         int choice = JOptionPane.showConfirmDialog(this, message, "Game Over",
                 JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
-            startGame();
+            startGame(previousSettings);
         } else {
             InitialMenu initialMenu = new InitialMenu(frame);
             frame.getContentPane().removeAll();
@@ -195,6 +213,7 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
         }
         snake.score = 0;
         snake.body.clear();
+
     }
 
 
