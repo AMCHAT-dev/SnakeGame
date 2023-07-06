@@ -20,18 +20,17 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
     protected static final int BOARD_WIDTH = 40;
     protected static final int BOARD_HEIGHT = 30;
     protected static final int CELL_SIZE = 20;
+    //External Elements
     protected final Snake snake = new Snake();
     protected final Food food = new Food();
     protected final JLabel scoreLabel, highScoreLabel, displayLevel, pauseMessage, soundMessage;
-    protected boolean gameIsRunning;
+    private final JFrame frame;
+    private final Sound sound = new Sound();
+    private final Difficulty difficulty;
+    private final int levelId;
     protected int highScore;
+    protected boolean gameIsRunning;
     private Timer timer;
-    private Difficulty difficulty;
-    private JFrame frame;
-    private int levelId;
-
-    private Sound sound = new Sound();
-
     private long lastTimeDirectionChanged;
     private Player currentPlayer;
 
@@ -80,6 +79,9 @@ public abstract class DefaultLevel extends JPanel implements ActionListener {
 
     public void startGame(SoundSettings soundSettings, Player player) {
         this.currentPlayer = player;
+        highScore = player.getHighscoreOfLevel(levelId);
+        highScoreLabel.setText("High Score: " + highScore);
+        add(highScoreLabel);
         snake.xPos = BOARD_WIDTH / 2;
         snake.yPos = BOARD_HEIGHT / 2;
         snake.direction = Direction.STOPPED;
