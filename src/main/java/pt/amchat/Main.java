@@ -4,29 +4,19 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
+        MyConnection con = new MyConnection();
+        con.createTable();
+        con.close();
+
         JFrame frame = new JFrame("Snake Window");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         frame.setResizable(false);
 
-        InitialMenu initialMenu = new InitialMenu(frame);
-        frame.add(initialMenu);
+        Login login = new Login(frame);
+        frame.add(login);
         frame.setVisible(true);
 
-        Player afonso = new Player("Afonso");
-        afonso.setHighscore(10, 1);
-        Player joana = new Player("Joana");
-        joana.setHighscore(15, 1);
-
-        MyConnection con = new MyConnection();
-        con.connect();
-        con.createTable();
-        con.savePlayer(afonso);
-        con.savePlayer(joana);
-        for (PlayerDTO playerDTO : con.retrieveTop10(1)) {
-            System.out.println(playerDTO);
-        }
-        con.close();
     }
 
 }

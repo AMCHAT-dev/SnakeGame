@@ -22,8 +22,12 @@ public class InitialMenu extends JPanel implements ActionListener {
     private JFrame frame;
     private Difficulty difficultySelected = Difficulty.EASY;
 
-    public InitialMenu(JFrame frame) {
+    private Player currentPlayer;
+
+    public InitialMenu(JFrame frame, Player player) {
+        this.currentPlayer = player;
         this.frame = frame;
+        if (!currentPlayer.isRegisteredAlready()) currentPlayer.registerPlayer();
         setLayout(new BorderLayout());
 
         JPanel buttonPanel = new JPanel();
@@ -103,11 +107,12 @@ public class InitialMenu extends JPanel implements ActionListener {
     }
 
     private void startGameFromMenu(DefaultLevel game) {
+        // TODO able to change sound settings on Menu
         frame.getContentPane().removeAll();
         frame.getContentPane().add(game);
         frame.getContentPane().revalidate();
         frame.getContentPane().repaint();
-        game.startGame(SoundSettings.ON);
+        game.startGame(SoundSettings.ON, currentPlayer);
         game.requestFocus();
     }
 }
