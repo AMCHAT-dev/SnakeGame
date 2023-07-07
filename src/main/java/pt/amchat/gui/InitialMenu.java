@@ -1,9 +1,7 @@
-package pt.amchat;
+package pt.amchat.gui;
 
+import pt.amchat.Player;
 import pt.amchat.levelelements.Difficulty;
-import pt.amchat.levels.DefaultLevel;
-import pt.amchat.levels.Level1;
-import pt.amchat.levels.Level2;
 import pt.amchat.sound.SoundSettings;
 
 import javax.swing.*;
@@ -22,8 +20,12 @@ public class InitialMenu extends JPanel implements ActionListener {
     private JFrame frame;
     private Difficulty difficultySelected = Difficulty.EASY;
 
-    public InitialMenu(JFrame frame) {
+    private Player currentPlayer;
+
+    public InitialMenu(JFrame frame, Player player) {
+        this.currentPlayer = player;
         this.frame = frame;
+        if (!currentPlayer.isRegisteredAlready()) currentPlayer.registerPlayer();
         setLayout(new BorderLayout());
 
         JPanel buttonPanel = new JPanel();
@@ -107,7 +109,7 @@ public class InitialMenu extends JPanel implements ActionListener {
         frame.getContentPane().add(game);
         frame.getContentPane().revalidate();
         frame.getContentPane().repaint();
-        game.startGame(SoundSettings.ON);
+        game.startGame(SoundSettings.ON, currentPlayer);
         game.requestFocus();
     }
 }
