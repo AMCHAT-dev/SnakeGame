@@ -1,5 +1,7 @@
 package pt.amchat;
 
+import pt.amchat.gui.Login;
+
 import javax.swing.*;
 
 public class Main {

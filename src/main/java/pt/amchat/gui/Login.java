@@ -1,4 +1,7 @@
-package pt.amchat;
+package pt.amchat.gui;
+
+import pt.amchat.MyConnection;
+import pt.amchat.Player;
 
 import javax.swing.*;
 import java.awt.*;

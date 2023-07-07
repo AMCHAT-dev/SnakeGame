@@ -1,9 +1,7 @@
-package pt.amchat;
+package pt.amchat.gui;
 
+import pt.amchat.Player;
 import pt.amchat.levelelements.Difficulty;
-import pt.amchat.levels.DefaultLevel;
-import pt.amchat.levels.Level1;
-import pt.amchat.levels.Level2;
 import pt.amchat.sound.SoundSettings;
 
 import javax.swing.*;
@@ -107,7 +105,6 @@ public class InitialMenu extends JPanel implements ActionListener {
     }
 
     private void startGameFromMenu(DefaultLevel game) {
-        // TODO able to change sound settings on Menu
         frame.getContentPane().removeAll();
         frame.getContentPane().add(game);
         frame.getContentPane().revalidate();

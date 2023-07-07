@@ -1,4 +1,4 @@
-package pt.amchat.levels;
+package pt.amchat.gui;
 
 import pt.amchat.levelelements.Difficulty;
 

@@ -2,6 +2,7 @@ package pt.amchat;
 
 public class Constants {
     public static final int NUMBER_OF_LEVELS = 2;
-    public static final String PASSWORD = "@Telemovel1";
-    public static final String USER = "root";
+    // TODO change this to MySQL user credentials
+    public static final String PASSWORD = "password";
+    public static final String USER = "user";
 }

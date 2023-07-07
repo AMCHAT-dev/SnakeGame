@@ -1,6 +1,5 @@
-package pt.amchat.levels;
+package pt.amchat.gui;
 
-import pt.amchat.InitialMenu;
 import pt.amchat.Player;
 import pt.amchat.levelelements.Difficulty;
 import pt.amchat.levelelements.Direction;
